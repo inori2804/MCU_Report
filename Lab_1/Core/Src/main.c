@@ -73,9 +73,6 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-	void clearAllClock(){
-		GPIOA->ODR |= 0xFFF0; //using data output register to set 12bit high of port B to 1
-	}
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -88,15 +85,66 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-
+	void setNumberOnClock(int num) {
+		switch (num) {
+		case 0: {
+			HAL_GPIO_WritePin(LABEL_B_GPIO_Port, LABEL_B_Pin, RESET);
+			break;
+		}
+		case 1: {
+			HAL_GPIO_WritePin(LABEL_C_GPIO_Port, LABEL_C_Pin, RESET);
+			break;
+		}
+		case 2: {
+			HAL_GPIO_WritePin(LABEL_D_GPIO_Port, LABEL_D_Pin, RESET);
+			break;
+		}
+		case 3: {
+			HAL_GPIO_WritePin(LABEL_E_GPIO_Port, LABEL_E_Pin, RESET);
+			break;
+		}
+		case 4: {
+			HAL_GPIO_WritePin(LABEL_F_GPIO_Port, LABEL_F_Pin, RESET);
+			break;
+		}
+		case 5: {
+			HAL_GPIO_WritePin(LABEL_G_GPIO_Port, LABEL_G_Pin, RESET);
+			break;
+		}
+		case 6: {
+			HAL_GPIO_WritePin(LABEL_H_GPIO_Port, LABEL_H_Pin, RESET);
+			break;
+		}
+		case 7: {
+			HAL_GPIO_WritePin(LABEL_I_GPIO_Port, LABEL_I_Pin, RESET);
+			break;
+		}
+		case 8: {
+			HAL_GPIO_WritePin(LABEL_J_GPIO_Port, LABEL_J_Pin, RESET);
+			break;
+		}
+		case 9: {
+			HAL_GPIO_WritePin(LABEL_K_GPIO_Port, LABEL_K_Pin, RESET);
+			break;
+		}
+		case 10: {
+			HAL_GPIO_WritePin(LABEL_L_GPIO_Port, LABEL_L_Pin, RESET);
+			break;
+		}
+		case 11: {
+			HAL_GPIO_WritePin(LABEL_A_GPIO_Port, LABEL_A_Pin, RESET);
+			break;
+		}
+		default: break;
+		}
+	}
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-//	turn on led 3 4 5 6, wait 3s and turn off them
-	GPIOA->ODR |= 0xF0F0;
-	HAL_Delay(3000);
-	clearAllClock();
+//	turn on led 5
+	GPIOA->ODR = 0xFFF0;
+	setNumberOnClock(5);
 	while (1) {
     /* USER CODE END WHILE */
 
@@ -153,16 +201,16 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOA_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7
-                          |GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_11
-                          |GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, LABEL_A_Pin|LABEL_B_Pin|LABEL_C_Pin|LABEL_D_Pin
+                          |LABEL_E_Pin|LABEL_F_Pin|LABEL_G_Pin|LABEL_H_Pin
+                          |LABEL_I_Pin|LABEL_J_Pin|LABEL_K_Pin|LABEL_L_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : PA4 PA5 PA6 PA7
-                           PA8 PA9 PA10 PA11
-                           PA12 PA13 PA14 PA15 */
-  GPIO_InitStruct.Pin = GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7
-                          |GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_11
-                          |GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15;
+  /*Configure GPIO pins : LABEL_A_Pin LABEL_B_Pin LABEL_C_Pin LABEL_D_Pin
+                           LABEL_E_Pin LABEL_F_Pin LABEL_G_Pin LABEL_H_Pin
+                           LABEL_I_Pin LABEL_J_Pin LABEL_K_Pin LABEL_L_Pin */
+  GPIO_InitStruct.Pin = LABEL_A_Pin|LABEL_B_Pin|LABEL_C_Pin|LABEL_D_Pin
+                          |LABEL_E_Pin|LABEL_F_Pin|LABEL_G_Pin|LABEL_H_Pin
+                          |LABEL_I_Pin|LABEL_J_Pin|LABEL_K_Pin|LABEL_L_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
