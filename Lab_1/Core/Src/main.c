@@ -73,6 +73,9 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
+	void clearAllClock(){
+		GPIOA->ODR |= 0xFFF0; //using data output register to set 12bit high of port B to 1
+	}
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -90,21 +93,11 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	int state = 65504; // in binary is 1111 1111 1110 0000, we don't use 4bits low
-	int val = 8; // in binary is 1000
-	GPIOA->ODR = 0xFFFF; // turn off all led
+//	turn on led 3 4 5 6, wait 3s and turn off them
+	GPIOA->ODR |= 0xF0F0;
+	HAL_Delay(3000);
+	clearAllClock();
 	while (1) {
-//		mean that if state < 0111 1111 1111 0000 (in binary) reset state and val
-		if (state < 32752) {
-			state = 65504;
-			val = 8;
-		}
-//		using data output resigter to update port A
-		GPIOA->ODR = state;
-//		each loop using divide val to shift lef bit-0 of sate one times and replace with bit 1
-		val = val * 2;
-		state -= val;
-		HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
