@@ -201,7 +201,6 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-
 	// set init state for each led
 	HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin, GPIO_PIN_SET);
@@ -211,70 +210,77 @@ int main(void)
 	HAL_GPIO_WritePin(LED_YELLOW1_GPIO_Port, LED_YELLOW1_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(LED_GREEN1_GPIO_Port, LED_GREEN1_Pin, GPIO_PIN_RESET);
 
-	// assign time for each led, must be green + yellow = red
+	// set time for each led
 	int time_red = 5;
 	int time_yellow = 2;
 	int time_green = 3;
-	int cd = -1;
 
-	// caculate countdown time for each led
-	int cd_red = cd + time_red;
-	int cd_green1 = cd_red + time_green;
-	int cd_green2 = cd + time_green;
-	int cd_yellow = cd_green1 + time_yellow;
+	int count = -1;
 
-	// assign time count down for led 7Seg
-	int cd_7seg = time_red;
-	int cd_7seg1 = time_green;
+	// calculate time for each led to switch state
+	int count_red = count + time_red; // = 4
+	int count_green1 = count_red + time_green; // = 7
+	int count_green2 = count + time_green; // = 2
+	int count_yellow = count_green1 + time_yellow; // = 9
+//	set count down time for led7seg and lef7seg1
+	int count_down_7seg = time_red - 1;
+	int count_down_7seg1 = time_green - 1;
 
-  /* USER CODE END 2 */
+/* USER CODE END 2 */
 
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
+/* Infinite loop */
+/* USER CODE BEGIN WHILE */
 	while (1) {
-		if (cd == cd_green2) {
+//		divide one cycle 10 unit time to 3 phase for each traffic light (TL) 1 and 2
+
+//		phase 1 - TL 2: 1->3 is green on, red and yellow off
+		if (count == count_green2) {
 			HAL_GPIO_TogglePin(LED_GREEN1_GPIO_Port, LED_GREEN1_Pin);
 			HAL_GPIO_TogglePin(LED_YELLOW1_GPIO_Port, LED_YELLOW1_Pin);
 
-			cd_7seg1 = time_yellow;
+			count_down_7seg1 = time_yellow - 1;
 		}
-		if (cd == cd_red) {
+//		phase 1 - TL 1: 1->5 is red on, green and yellow off
+		if (count == count_red) {
 			HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
 			HAL_GPIO_TogglePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin);
-
+//		phase 2 - TL 2: 3->5 is yellow on, red and green off
 			HAL_GPIO_TogglePin(LED_YELLOW1_GPIO_Port, LED_YELLOW1_Pin);
 			HAL_GPIO_TogglePin(LED_RED1_GPIO_Port, LED_RED1_Pin);
 
-			cd_7seg = time_green;
-			cd_7seg1 = time_red;
+			count_down_7seg = time_green - 1;
+			count_down_7seg1 = time_red - 1;
 		}
-		if (cd == cd_green1) {
+//		phase 2 - TL 1: 5->8 is green on, yellow and red off
+		if (count == count_green1) {
 			HAL_GPIO_TogglePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin);
 			HAL_GPIO_TogglePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin);
 
-			cd_7seg = time_yellow;
+			count_down_7seg = time_yellow - 1;
 		}
-		if (cd == cd_yellow) {
+//		phase 3 - TL 1: 8->10 is yellow on, red and green off
+		if (count == count_yellow) {
 			HAL_GPIO_TogglePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin);
 			HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
-
+//		phase 3 - TL 2: 5->10 is red on, green and yellow off
 			HAL_GPIO_TogglePin(LED_RED1_GPIO_Port, LED_RED1_Pin);
 			HAL_GPIO_TogglePin(LED_GREEN1_GPIO_Port, LED_GREEN1_Pin);
 
-			cd_7seg = time_red;
-			cd_7seg1 = time_green;
+			count_down_7seg = time_red - 1;
+			count_down_7seg1 = time_green - 1;
 		}
-		cd++;
-		if (cd > time_red + time_yellow + time_green - 1)
-			cd = 0;
 
-		if (cd_7seg > 0)
-			display7SEG(cd_7seg);
-		cd_7seg--;
+		count++;
+//		check if it finish one cycle, if yes then reset variable count
+		if (count > time_red + time_yellow + time_green - 1)
+			count = 0;
+		if (count_down_7seg >= 0)
+			display7SEG(count_down_7seg);
+		count_down_7seg--;
 
-		if (cd_7seg1 > 0)
-			display7SEG_1(cd_7seg1);
-		cd_7seg1--;
+		if (count_down_7seg1 >= 0)
+			display7SEG_1(count_down_7seg1);
+		count_down_7seg1--;
 
 		HAL_Delay(1000);
     /* USER CODE END WHILE */
