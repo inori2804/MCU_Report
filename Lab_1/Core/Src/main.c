@@ -138,13 +138,69 @@ int main(void)
 		default: break;
 		}
 	}
+
+	void clearNumberOnClock(int num) {
+			switch (num) {
+			case 0: {
+				HAL_GPIO_WritePin(LABEL_B_GPIO_Port, LABEL_B_Pin, SET);
+				break;
+			}
+			case 1: {
+				HAL_GPIO_WritePin(LABEL_C_GPIO_Port, LABEL_C_Pin, SET);
+				break;
+			}
+			case 2: {
+				HAL_GPIO_WritePin(LABEL_D_GPIO_Port, LABEL_D_Pin, SET);
+				break;
+			}
+			case 3: {
+				HAL_GPIO_WritePin(LABEL_E_GPIO_Port, LABEL_E_Pin, SET);
+				break;
+			}
+			case 4: {
+				HAL_GPIO_WritePin(LABEL_F_GPIO_Port, LABEL_F_Pin, SET);
+				break;
+			}
+			case 5: {
+				HAL_GPIO_WritePin(LABEL_G_GPIO_Port, LABEL_G_Pin, SET);
+				break;
+			}
+			case 6: {
+				HAL_GPIO_WritePin(LABEL_H_GPIO_Port, LABEL_H_Pin, SET);
+				break;
+			}
+			case 7: {
+				HAL_GPIO_WritePin(LABEL_I_GPIO_Port, LABEL_I_Pin, SET);
+				break;
+			}
+			case 8: {
+				HAL_GPIO_WritePin(LABEL_J_GPIO_Port, LABEL_J_Pin, SET);
+				break;
+			}
+			case 9: {
+				HAL_GPIO_WritePin(LABEL_K_GPIO_Port, LABEL_K_Pin, SET);
+				break;
+			}
+			case 10: {
+				HAL_GPIO_WritePin(LABEL_L_GPIO_Port, LABEL_L_Pin, SET);
+				break;
+			}
+			case 11: {
+				HAL_GPIO_WritePin(LABEL_A_GPIO_Port, LABEL_A_Pin, SET);
+				break;
+			}
+			default: break;
+			}
+		}
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-//	turn on led 5
+//	turn on led 5, wait 3s and turn off it
 	GPIOA->ODR = 0xFFF0;
 	setNumberOnClock(5);
+	HAL_Delay(3000);
+	clearNumberOnClock(5);
 	while (1) {
     /* USER CODE END WHILE */
 
