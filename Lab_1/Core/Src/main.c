@@ -73,122 +73,6 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-	void display7SEG(int num) {
-		switch (num) {
-//		using output data register to set value for port B
-		case 0: {
-//			using operator & with 0xFF00 to reset 8bits low
-			GPIOB->ODR &= 0xFF00;
-//			set value to 8bits low by using operator & to retain 8bits high
-			GPIOB->ODR |= 0x0040;
-			break;
-		}
-		case 1: {
-			GPIOB->ODR &= 0xFF00;
-			GPIOB->ODR |= 0x0079;
-			break;
-		}
-		case 2: {
-			GPIOB->ODR &= 0xFF00;
-			GPIOB->ODR |= 0x0024;
-			break;
-		}
-		case 3: {
-			GPIOB->ODR &= 0xFF00;
-			GPIOB->ODR |= 0x0030;
-			break;
-		}
-		case 4: {
-			GPIOB->ODR &= 0xFF00;
-			GPIOB->ODR |= 0x0019;
-			break;
-		}
-		case 5: {
-			GPIOB->ODR &= 0xFF00;
-			GPIOB->ODR |= 0x0012;
-			break;
-		}
-		case 6: {
-			GPIOB->ODR &= 0xFF00;
-			GPIOB->ODR |= 0x0002;
-			break;
-		}
-		case 7: {
-			GPIOB->ODR &= 0xFF00;
-			GPIOB->ODR |= 0x0078;
-			break;
-		}
-		case 8: {
-			GPIOB->ODR &= 0xFF00;
-			GPIOB->ODR |= 0x0000;
-			break;
-		}
-		case 9: {
-			GPIOB->ODR &= 0xFF00;
-			GPIOB->ODR |= 0x0010;
-			break;
-		}
-		default:
-			break;
-		}
-	}
-//	similar with function display7SEG but using 8bits high
-	void display7SEG_1(int num) {
-		switch (num) {
-		case 0: {
-			GPIOB->ODR &= 0x00FF;
-			GPIOB->ODR |= 0x4000;
-			break;
-		}
-		case 1: {
-			GPIOB->ODR &= 0x00FF;
-			GPIOB->ODR |= 0x7900;
-			break;
-		}
-		case 2: {
-			GPIOB->ODR &= 0x00FF;
-			GPIOB->ODR |= 0x2400;
-			break;
-		}
-		case 3: {
-			GPIOB->ODR &= 0x00FF;
-			GPIOB->ODR |= 0x3000;
-			break;
-		}
-		case 4: {
-			GPIOB->ODR &= 0x00FF;
-			GPIOB->ODR |= 0x1900;
-			break;
-		}
-		case 5: {
-			GPIOB->ODR &= 0x00FF;
-			GPIOB->ODR |= 0x1200;
-			break;
-		}
-		case 6: {
-			GPIOB->ODR &= 0x00FF;
-			GPIOB->ODR |= 0x0200;
-			break;
-		}
-		case 7: {
-			GPIOB->ODR &= 0x00FF;
-			GPIOB->ODR |= 0x7800;
-			break;
-		}
-		case 8: {
-			GPIOB->ODR &= 0x00FF;
-			GPIOB->ODR |= 0x0000;
-			break;
-		}
-		case 9: {
-			GPIOB->ODR &= 0x00FF;
-			GPIOB->ODR |= 0x1000;
-			break;
-		}
-		default:
-			break;
-		}
-	}
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -201,87 +85,25 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-	// set init state for each led
-	HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin, GPIO_PIN_SET);
-	HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_SET);
 
-	HAL_GPIO_WritePin(LED_RED1_GPIO_Port, LED_RED1_Pin, GPIO_PIN_SET);
-	HAL_GPIO_WritePin(LED_YELLOW1_GPIO_Port, LED_YELLOW1_Pin, GPIO_PIN_SET);
-	HAL_GPIO_WritePin(LED_GREEN1_GPIO_Port, LED_GREEN1_Pin, GPIO_PIN_RESET);
+  /* USER CODE END 2 */
 
-	// set time for each led
-	int time_red = 5;
-	int time_yellow = 2;
-	int time_green = 3;
-
-	int count = -1;
-
-	// calculate time for each led to switch state
-	int count_red = count + time_red; // = 4
-	int count_green1 = count_red + time_green; // = 7
-	int count_green2 = count + time_green; // = 2
-	int count_yellow = count_green1 + time_yellow; // = 9
-//	set count down time for led7seg and lef7seg1
-	int count_down_7seg = time_red - 1;
-	int count_down_7seg1 = time_green - 1;
-
-/* USER CODE END 2 */
-
-/* Infinite loop */
-/* USER CODE BEGIN WHILE */
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
+	int state = 65504; // in binary is 1111 1111 1110 0000, we don't use 4bits low
+	int val = 8; // in binary is 1000
+	GPIOA->ODR = 0xFFFF; // turn off all led
 	while (1) {
-//		divide one cycle 10 unit time to 3 phase for each traffic light (TL) 1 and 2
-
-//		phase 1 - TL 2: 1->3 is green on, red and yellow off
-		if (count == count_green2) {
-			HAL_GPIO_TogglePin(LED_GREEN1_GPIO_Port, LED_GREEN1_Pin);
-			HAL_GPIO_TogglePin(LED_YELLOW1_GPIO_Port, LED_YELLOW1_Pin);
-
-			count_down_7seg1 = time_yellow - 1;
+//		mean that if state < 0111 1111 1111 0000 (in binary) reset state and val
+		if (state < 32752) {
+			state = 65504;
+			val = 8;
 		}
-//		phase 1 - TL 1: 1->5 is red on, green and yellow off
-		if (count == count_red) {
-			HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
-			HAL_GPIO_TogglePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin);
-//		phase 2 - TL 2: 3->5 is yellow on, red and green off
-			HAL_GPIO_TogglePin(LED_YELLOW1_GPIO_Port, LED_YELLOW1_Pin);
-			HAL_GPIO_TogglePin(LED_RED1_GPIO_Port, LED_RED1_Pin);
-
-			count_down_7seg = time_green - 1;
-			count_down_7seg1 = time_red - 1;
-		}
-//		phase 2 - TL 1: 5->8 is green on, yellow and red off
-		if (count == count_green1) {
-			HAL_GPIO_TogglePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin);
-			HAL_GPIO_TogglePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin);
-
-			count_down_7seg = time_yellow - 1;
-		}
-//		phase 3 - TL 1: 8->10 is yellow on, red and green off
-		if (count == count_yellow) {
-			HAL_GPIO_TogglePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin);
-			HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
-//		phase 3 - TL 2: 5->10 is red on, green and yellow off
-			HAL_GPIO_TogglePin(LED_RED1_GPIO_Port, LED_RED1_Pin);
-			HAL_GPIO_TogglePin(LED_GREEN1_GPIO_Port, LED_GREEN1_Pin);
-
-			count_down_7seg = time_red - 1;
-			count_down_7seg1 = time_green - 1;
-		}
-
-		count++;
-//		check if it finish one cycle, if yes then reset variable count
-		if (count > time_red + time_yellow + time_green - 1)
-			count = 0;
-		if (count_down_7seg >= 0)
-			display7SEG(count_down_7seg);
-		count_down_7seg--;
-
-		if (count_down_7seg1 >= 0)
-			display7SEG_1(count_down_7seg1);
-		count_down_7seg1--;
-
+//		using data output resigter to update port A
+		GPIOA->ODR = state;
+//		each loop using divide val to shift lef bit-0 of sate one times and replace with bit 1
+		val = val * 2;
+		state -= val;
 		HAL_Delay(1000);
     /* USER CODE END WHILE */
 
@@ -336,39 +158,22 @@ static void MX_GPIO_Init(void)
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOA_CLK_ENABLE();
-  __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, LED_RED_Pin|LED_YELLOW_Pin|LED_GREEN_Pin|LED_GREEN1_Pin
-                          |LED_YELLOW1_Pin|LED_RED1_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7
+                          |GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_11
+                          |GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_10
-                          |GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14
-                          |GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6
-                          |GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_RESET);
-
-  /*Configure GPIO pins : LED_RED_Pin LED_YELLOW_Pin LED_GREEN_Pin LED_GREEN1_Pin
-                           LED_YELLOW1_Pin LED_RED1_Pin */
-  GPIO_InitStruct.Pin = LED_RED_Pin|LED_YELLOW_Pin|LED_GREEN_Pin|LED_GREEN1_Pin
-                          |LED_YELLOW1_Pin|LED_RED1_Pin;
+  /*Configure GPIO pins : PA4 PA5 PA6 PA7
+                           PA8 PA9 PA10 PA11
+                           PA12 PA13 PA14 PA15 */
+  GPIO_InitStruct.Pin = GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7
+                          |GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_11
+                          |GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : PB0 PB1 PB2 PB10
-                           PB11 PB12 PB13 PB14
-                           PB3 PB4 PB5 PB6
-                           PB8 PB9 */
-  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_10
-                          |GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14
-                          |GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6
-                          |GPIO_PIN_8|GPIO_PIN_9;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 }
 
